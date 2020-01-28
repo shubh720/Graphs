@@ -1,0 +1,124 @@
+#include<iostream>
+#include<unordered_map>
+#include<queue>
+#include<list>
+#include<climits>
+using namespace std;
+
+template<typename T>
+class graph{
+ unordered_map <T ,list<T> > mymap;  // key int ok , list bcoz one to many hai so chaining for one key
+
+ public :
+
+  void addEdge(T snode,T dnode,bool bider=true){
+     // mymap[snode] = dnode yeh tabh hota jab list nhi simple int hota but list hai toh 
+     mymap[snode].push_back(dnode);
+      if(bider){
+          mymap[dnode].push_back(snode);
+      }
+  }
+
+  void print(){
+     
+      for(auto i:mymap){
+        cout<<i.first<<"-->";   // i.first se key milega 
+         for(auto j:i.second){
+             cout<<j<<",";
+         }        
+       cout<<endl; 
+      }
+  }
+
+// d is initial edge to start bfs with
+  void bfs(T d){
+ queue<T>q;  
+ unordered_map<T,bool> visited;  // T any data type of key , bool bcoz to check visited or not
+ q.push(d);
+ visited[d] = 1;
+
+   while(!q.empty()){
+     T save = q.front();
+     cout<<save<<" ";
+     q.pop();
+       
+       for(auto i:mymap[save]){  // mymap[save]  means neighbour not mymap as a whole
+           if(visited[i]==0){
+               q.push(i);
+               visited[i]=1;
+           }
+       }
+   }
+ }
+
+  void bfs_sssp(T src){
+    queue<T>q;
+    // let's take hashmap for keeping visited
+    unordered_map<T,int> visited; //**VISITED maintains distance too**
+    unordered_map<T,int> parent;  // keep track of parent node
+    q.push(src);
+
+      for(auto i:mymap){
+          visited[i.first] = INT_MAX;
+      }
+
+    visited[src] = 0; //1st thing aisa krte hai isko inf lelete  
+    parent[src] = src;
+
+      while(!q.empty()){
+        T node = q.front();
+        q.pop();
+          for(auto i:mymap[node]){
+              if(visited[i]==INT_MAX){
+                  // idhar aaya mtlab node visited nhi hai
+                  q.push(i);
+                  visited[i] = visited[node] + 1;
+                  parent[i] = node;
+              }
+          }
+
+      }
+
+    for(auto i:visited){
+        cout<<i.second<<",";
+    }  
+
+
+  }
+
+};
+
+int main() {
+ 
+ graph<int> g;
+    g.addEdge(1,0,true);
+    g.addEdge(1,2,true);
+    g.addEdge(0,4,true);
+    g.addEdge(2,4,true);
+    g.addEdge(2,3,true);
+    g.addEdge(3,4,true);
+    g.addEdge(3,5,true);
+  /*  g.addEdge(0,1,true);
+    g.addEdge(0,2,true);
+    g.addEdge(0,3,true);
+    g.addEdge(1,4,true);
+    g.addEdge(2,3,true);
+    g.addEdge(2,4,true);
+    g.addEdge(3,4,true);
+    g.addEdge(5,6,true); */
+ /*g.addEdge("putin","trump",false);
+ g.addEdge("putin","modi",false);
+ g.addEdge("putin","pope",false);
+ g.addEdge("trump","modi",true);
+ g.addEdge("prabhu","modi",false);
+ g.addEdge("modi","yogi",true);
+ g.addEdge("yogi","prabhu",false);*/
+ //g.addEdge("shubh","kumar",false); ek edge jarur banega but traverse humesha connected graph he hoga example is here.
+
+   g.print(); 
+   cout<<endl<<"Traversed list : "<<endl;
+   //g.bfs("putin");
+   cout<<endl;
+   g.bfs_sssp(0);
+  return 0;
+}
