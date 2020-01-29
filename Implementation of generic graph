@@ -82,10 +82,27 @@ class graph{
     for(auto i:visited){
         cout<<i.second<<",";
     }  
+ }
 
-
+// depth first search
+ void dfsHelper(T node,unordered_map<T,bool> &visited){
+  visited[node]=1;
+  cout<<node<<" ";
+  
+  for(auto i:mymap[node])
+    if(visited[i]!=1){
+     dfsHelper(i,visited);
+    } 
   }
 
+  void dfs(T src){
+      unordered_map<T,bool> visited;
+       for(auto i:mymap){
+           visited[i.first]=0;
+       }
+      dfsHelper(src,visited);
+  }
+// main se isliye nhi pass kiya bcoz mymap ka access nhi tha
 };
 
 int main() {
@@ -98,6 +115,8 @@ int main() {
     g.addEdge(2,3,true);
     g.addEdge(3,4,true);
     g.addEdge(3,5,true);
+
+   
   /*  g.addEdge(0,1,true);
     g.addEdge(0,2,true);
     g.addEdge(0,3,true);
@@ -116,9 +135,10 @@ int main() {
  //g.addEdge("shubh","kumar",false); ek edge jarur banega but traverse humesha connected graph he hoga example is here.
 
    g.print(); 
-   cout<<endl<<"Traversed list : "<<endl;
+   // cout<<endl<<"Traversed list : "<<endl;
    //g.bfs("putin");
-   cout<<endl;
-   g.bfs_sssp(0);
+   //cout<<endl;
+   g.dfs(0);
+   //g.bfs_sssp(0);
   return 0;
 }
