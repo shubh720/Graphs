@@ -1,0 +1,32 @@
+#include<iostream>
+#include<unordered_map>
+#include<list>
+using namespace std;
+
+int main() {
+   unordered_map<int,list<int>> mymap;
+   mymap[0].push_back(10);
+   mymap[0].push_back(50);
+   mymap[1].push_back(20);
+   mymap[2].push_back(30); 
+
+  list<int> :: iterator it;
+  for(it=mymap[0].begin();it!=mymap[0].end();it++){
+      cout<<*it<<" ";
+  }
+ cout<<endl; 
+
+ // mymap ka iterator chahiye
+ //# actual loop using iterators
+  unordered_map<int,list<int> > :: iterator i; 
+  for(i=mymap.begin();i!=mymap.end();i++){
+      cout<<i->first<<" ";
+  }
+cout<<endl;
+
+// #using auto keyword 
+ for(auto j:mymap){
+     cout<<j.first<<" ";
+ } 
+cout<<endl;  
+}
