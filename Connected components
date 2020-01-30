@@ -1,0 +1,80 @@
+#include<iostream>
+#include<unordered_map>
+#include<list>
+using namespace std;
+
+template<typename T>
+class graph{
+ unordered_map<T,list<T>> mymap;
+
+  public:
+   void addEdge(T src,T dest,bool bider=true){
+     mymap[src].push_back(dest);
+       if(bider){
+           mymap[dest].push_back(src);
+       }
+    }
+
+// let's code connected component    
+
+   void dfsDriver(T src,unordered_map<T,bool> &visited){
+      visited[src]=1;
+      cout<<src<<" ";
+
+       for(auto lit:mymap[src]){
+           if(visited[lit]!=1){
+               visited[lit] = 1;
+               dfsDriver(lit,visited);
+           }
+       }
+
+   }
+
+   void dfs(T src){
+     unordered_map<T,bool> visited;
+     int comp=1;
+     for(auto i:mymap){
+         visited[i.first] = 0;
+     }
+      dfsDriver(src,visited);
+      cout<<endl;
+  
+  // checking kaun kaun rhegya hai    
+    for(auto i:mymap){ 
+     if(visited[i.first]==0){
+      dfsDriver(i.first,visited);
+      comp++;
+     }
+    }
+
+ cout<<"\n Number of component(s) is/are :"<<comp<<endl;
+   } 
+
+   void print(){
+      for(auto i:mymap){
+          cout<<i.first<<"--->";
+            for(auto j:i.second){
+                cout<<j<<", ";
+            }
+         cout<<endl;   
+      }
+    }
+};
+
+int main(){
+ 
+ graph<string> g;
+ 
+  g.addEdge("amritsar","jaipur");
+  g.addEdge("amritsar","delhi");
+  g.addEdge("delhi","jaipur");
+  g.addEdge("mumbai","jaipur");
+  g.addEdge("mumbai","bhopal");
+  g.addEdge("delhi","bhopal");
+  g.addEdge("mumbai","bangalore");
+  g.addEdge("agra","delhi");
+  g.addEdge("andaman","nicobar");
+   
+    g.print();
+    g.dfs("amritsar");
+   return 0; 
