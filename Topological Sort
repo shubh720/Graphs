@@ -1,0 +1,73 @@
+#include<iostream>
+#include<unordered_map>
+#include<list>
+#include<stack>
+using namespace std;
+
+template<typename T>
+class graph{
+ unordered_map<T,list<T>> mymap;
+
+  public:
+// add edge function 
+   void addEdge(T src,T dest,bool bider=false){
+     mymap[src].push_back(dest);
+       if(bider==true){
+           mymap[dest].push_back(src);
+       }
+    }
+    
+ void topoHelper(T src,unordered_map<T,bool> &visited,stack<T> &s){
+   visited[src]=1;
+    
+     for(auto i:mymap[src]){
+         if(visited[i]==0){
+             topoHelper(i,visited,s);
+         }
+     }
+     s.push(src); 
+ return;
+ }
+ 
+ void topoSort(){
+  unordered_map<T,bool> visited;
+  stack<T>s; // to store element when visited
+  
+  for(auto i:mymap){
+      visited[i.first]=0;
+  } 
+ 
+   for(auto i:mymap){
+       if(visited[i.first]==0){
+           topoHelper(i.first,visited,s);
+       }
+   }
+ while(!s.empty()){
+     cout<<s.top()<<"-->";
+     s.pop();
+ }
+
+ }
+
+};
+
+int main(){
+ 
+  graph<string> g;
+  g.addEdge("english","programming logic");
+  g.addEdge("maths","programming logic");
+  g.addEdge("english","html");
+  g.addEdge("programming logic","html");
+  g.addEdge("programming logic","python");
+  g.addEdge("programming logic","java");
+  g.addEdge("html","css");
+  g.addEdge("css","js");
+  g.addEdge("programming logic","js");
+  g.addEdge("js","web development");
+  g.addEdge("python","web development");
+  g.addEdge("java","web development");
+
+ 
+   g.topoSort();
+   return 0; 
+}
