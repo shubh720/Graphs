@@ -1,0 +1,101 @@
+#include<iostream>
+#include<unordered_map>
+#include<list>
+#include<queue>
+using namespace std;
+
+template<typename T>
+class graph{
+ unordered_map<T,list<T>> mymap;
+
+  public:
+// add edge function 
+   void addEdge(T src,T dest,bool bider=false){
+     mymap[src].push_back(dest);
+       if(bider==true){
+           mymap[dest].push_back(src);
+       }
+    }
+// print function
+  void print(){
+      for(auto i:mymap){
+          cout<<i.first<<"--->";
+            for(auto j:i.second){
+                cout<<j<<", ";
+            }
+         cout<<endl;   
+      }
+   }
+
+ void topologicalBFS(){
+  unordered_map<T,bool> visited;    
+  unordered_map<T,int> indegree;
+  queue<T>q;
+
+     for(auto i:mymap){
+         T node = i.first;  // key in node
+         visited[node]=0;
+         indegree[node]=0;
+     } // everything indegree,visited both are zero
+
+    for(auto i:mymap){
+        T u = i.first;
+         for(auto v:mymap[u]){
+             indegree[v]++;
+         }
+    } // this will calc indegree for every node
+
+ // now, we have to search elements/node with 0 indegree
+  for(auto i:mymap){
+      T node = i.first;
+       if(indegree[node]==0){
+           q.push(node);
+       }
+  }
+// we have a queue containing all 0 indegree elements ,now print then pop then ask other    
+    while(!q.empty()){
+      T node = q.front();
+      q.pop();
+      cout<<node<<"-->";
+
+        for(auto neighbour:mymap[node]){
+            indegree[neighbour]--;
+
+            if(indegree[neighbour]==0){
+                q.push(neighbour);
+            }
+        }   
+
+    }
+ 
+ } // end of function
+ 
+};
+
+int main(){
+ 
+  graph<string> g;
+  g.addEdge("english","programming logic");
+  g.addEdge("maths","programming logic");
+  g.addEdge("english","html");
+  g.addEdge("programming logic","html");
+  g.addEdge("programming logic","python");
+  g.addEdge("programming logic","java");
+  g.addEdge("html","css");
+  g.addEdge("css","js");
+  g.addEdge("programming logic","js");
+  g.addEdge("js","web development");
+  g.addEdge("python","web development");
+  g.addEdge("java","web development");
+
+  /*g.addEdge(1,2,false);
+  g.addEdge(1,3,false);
+  g.addEdge(2,5,false);
+  g.addEdge(3,6,false);
+  g.addEdge(5,7,false);
+  g.addEdge(6,7,false); */
+
+  // g.print();
+   g.topologicalBFS();
+   return 0; 
+}
