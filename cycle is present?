@@ -1,0 +1,60 @@
+#include<iostream>
+#include<unordered_map>
+#include<list>
+#include<queue>
+using namespace std;
+
+template<typename T>
+class graph{
+unordered_map<T,list<T>> mymap; 
+  
+  public :
+   void addEdge(T src,T dest,bool bider=true){
+       mymap[src].push_back(dest);   //mymap[src] ek dabba dega jisme unordered ka second wala datatype hoga
+        if(bider){
+           mymap[dest].push_back(src);
+        }
+   }
+
+   bool cycleBFS(T src){
+    unordered_map<T,bool> visited;
+    unordered_map<T,T> parent;
+    queue<T> q;
+    q.push(src);
+    visited[src]=1;
+    parent[src]=src;
+
+       while(!q.empty()){
+         T node = q.front();
+        // cout<<node<<" ";
+         q.pop();
+           for(auto i:mymap[node]){
+               if(visited[i]==0){
+                   q.push(i);
+                   visited[i]=1;
+                   parent[i]=node;
+               }else if(visited[i]==1 && parent[node]!=i){
+                    return true;  
+               }
+           }
+       }
+     return false;  
+   }
+
+};
+
+
+int main(){
+ 
+ graph<int> g;
+  g.addEdge(0,1);
+  g.addEdge(0,4);
+  g.addEdge(1,2);
+  g.addEdge(4,2);
+  g.addEdge(2,3); 
+  g.addEdge(4,3);
+  g.addEdge(3,5); 
+
+ cout<<g.cycleBFS(3);
+  return 0;  
+}
