@@ -97,9 +97,6 @@ class graph{
 
   void dfs(T src){
       unordered_map<T,bool> visited;
-       for(auto i:mymap){
-           visited[i.first]=0;
-       }
       dfsHelper(src,visited);
   }
 // main se isliye nhi pass kiya bcoz mymap ka access nhi tha
