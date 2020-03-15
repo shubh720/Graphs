@@ -1,0 +1,90 @@
+#include<iostream>
+#include<list>
+#include<map>
+#include<set>
+#include<climits>
+#include<string>
+#include<unordered_map>
+using namespace std;
+
+template<typename T>
+class graph{
+  map<T,list<pair<T,int> > > mymap;
+  
+ public :
+   void addEdge(T key,T dest,int d,bool bider=true){
+     mymap[key].push_back(make_pair(dest,d));
+       if(bider){
+           mymap[dest].push_back(make_pair(key,d));
+       }
+   }   // add edge function end
+
+   void print(){
+      for(auto i:mymap){
+          T node = i.first;
+          cout<<node<<"-->";
+            for(auto j:mymap[node]){
+                cout<<j.first<<" "<<j.second<<", ";
+            }
+         cout<<endl;    
+      } 
+   }   // print function end 
+
+   void dijkstraShortestPath(T src){
+     unordered_map<T,int> distance; // distance record
+     set< pair<int,T> > s;  // set of dist,destination(dest) ,jo hume min at each tym btaega.
+
+      for(auto i:mymap){
+          // i.first will contain each node
+         distance[i.first] = INT_MAX; 
+      } // all nodes at inf.
+
+      distance[src]=0;
+      s.insert(make_pair(0,src));
+
+    while(!s.empty()){
+      
+      auto p = *(s.begin() );  // s.begin() starting pair * deref.
+      int dist = p.first;
+      T dest = p.second;
+       s.erase(s.begin());  // need to remove
+           
+          for(auto child:mymap[dest]){
+              // update distance if req.
+              if(distance[child.first] > dist+ child.second){
+
+                  auto f = s.find(make_pair(distance[child.first],child.first));
+                  if(f!=s.end()){
+                      s.erase(f);
+                  }
+                   distance[child.first] = dist + child.second;
+                   s.insert(make_pair(distance[child.first],child.first));
+                  
+              } 
+          }
+
+
+    } // end of while statement 
+   
+   // printing
+    for(auto i:distance){
+        cout<<"dest :"<<i.first<<" distance is : "<<i.second<<endl;
+    }
+
+
+   } // end of Dijkstra's algo
+
+};
+
+int main() {
+ graph<int> g;
+  g.addEdge(1,2,1);
+  g.addEdge(1,3,4);
+  g.addEdge(2,3,1);
+  g.addEdge(3,4,2);
+  g.addEdge(1,4,7);
+
+ //g.print();
+ g.dijkstraShortestPath(1);
+  return 0; 
+}
