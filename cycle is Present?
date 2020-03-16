@@ -1,0 +1,69 @@
+#include<iostream>
+#include<unordered_map>
+#include<list>
+#include<queue>
+using namespace std;
+
+template<typename T>
+class graph{
+ unordered_map<T,list<T> >mymap;
+
+ public :
+   void addEdge(T src,T dest,bool bider=true){
+      mymap[src].push_back(dest);  
+         if(bider){
+             mymap[dest].push_back(src);
+         } 
+   }
+
+  void print(){
+    for(auto i:mymap){
+        T node = i.first;
+        cout<<node<<"-->";
+          for(auto j:mymap[node]){
+              cout<<j<<",";
+          }
+       cout<<endl;   
+    } 
+  }
+
+  bool cycleDFS_driver(T src,unordered_map<T,bool> &visited,unordered_map<T,T> &parent){
+    visited[src]=true;
+    
+       for(auto i:mymap[src]){
+           if(visited[i]==0){
+               parent[i] = src;
+               cycleDFS_driver(i,visited,parent);
+           }else if(visited[i]==1 && parent[src]!=i){
+               return true;
+           }
+       }
+    return false;
+  }
+
+  bool cycleDFS(T src){
+    unordered_map<T,T> parent;
+    unordered_map<T,bool> visited;
+    
+    parent[src] = src;
+     return cycleDFS_driver(src,visited,parent);
+
+  }
+};
+
+int main(){
+
+ graph<int> g;
+ 
+ g.addEdge(0,1);
+ g.addEdge(0,4);
+ g.addEdge(1,2);
+ g.addEdge(2,4);
+ g.addEdge(2,3);
+ g.addEdge(4,3);
+ g.addEdge(3,5); 
+
+ g.print();
+ cout<< g.cycleDFS(0) <<endl;
+ return 0;
+}
