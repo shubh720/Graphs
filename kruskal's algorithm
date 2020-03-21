@@ -1,0 +1,107 @@
+#include<iostream>
+#include<algorithm>
+using namespace std;
+
+class edge{
+ public :  
+   int source;
+   int dest;
+   int weight;
+}; // edge contains src to dest + weight alomg its edge (bcoz weighted graph)
+
+bool compare(edge e1,edge e2){
+     return e1.weight < e2.weight;  // our declaration if successful than want sort else inbuilt sort will happen
+}
+
+// will return parent
+int findparent(int v,int *parent){
+    if(parent[v] == v){
+        return v;
+    }
+     return findparent(parent[v],parent); 
+}
+
+void kruskals(edge *input,int n,int e){
+ // 1st step is to sort the entire array
+  sort(input,input+e,compare); //sort(input,input+e) how will it sort edge on what basis ,has to be told by us so lets sort on weight basis
+  
+  // output array to store & acc to MST theory (vertices - 1 = edges)
+  // output array edges will be n-1 not e
+  edge *output = new edge[n-1];
+
+// parent must pe pointing to itself in starting acc to method of union-find
+  int *parent = new int[n]; 
+ 
+  for(int i=0;i<n;i++){
+      parent[i] = i;
+  }
+
+int count=0;  // count keeping record of position of o/p array
+int i=0;
+
+// iterate edge list and if edge is possible or not perform following operations
+  while(count != n-1){
+      edge temp = input[i];  // temp contains index i edge (full ie.. src,dest,weight)
+
+     int parent_temp_source = findparent(temp.source,parent);
+     int parent_temp_dest = findparent(temp.dest,parent);
+
+  // check if parents of both are same or not?
+  // if same parents then it must have cycle present in it
+     if(parent_temp_source != parent_temp_dest){
+         // means cycle is not present
+        output[count] =  temp; // push in o/p array
+        count++;
+        parent[parent_temp_source] = parent_temp_dest; 
+     } 
+   i++;     
+  } 
+
+// printing
+  for(int i=0; i<n-1 ;i++){
+      if(output[i].source < output[i].dest){
+          cout<<output[i].source<<" "<<output[i].dest<<" "<<output[i].weight<<endl;
+      }else{
+          cout<<output[i].dest<<" "<<output[i].source<<" "<<output[i].weight<<endl;
+      }
+  }
+
+}
+
+int main(){
+int n,e;  // number of vetices and edges respectively 
+cin>>n>>e;  
+
+// input has to be taken 
+ edge *input = new edge[e];   // int *a = new int[3] int-->class edge
+
+    for(int i=0;i<e;i++){
+        int s,d,w;
+        cin>>s>>d>>w;
+         input[i].source = s;
+         input[i].dest = d;
+         input[i].weight = w; 
+    }
+ // input done for all edges now kruskals MST
+  kruskals(input,n,e);     
+
+ return 0;
+}
+
+/*
+INPUT FORMAT
+6 11
+
+3 4 11
+2 5 10
+1 3 1
+0 1 2
+2 4 9
+2 1 8
+0 3 3
+0 2 4
+3 5 7
+4 5 5
+2 3 6
+
+*/
