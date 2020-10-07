@@ -1,0 +1,161 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+template<typename T>
+class graph{
+
+    unordered_map<T,list<T> > mymap;
+    
+    public : 
+        // adjency list
+        void addEdge(T src,T dest,bool bider = false){
+            mymap[src].push_back(dest);
+            if(bider){
+                mymap[dest].push_back(src);
+            }
+        }
+
+        // bfs traversal
+        void bfs(T src){
+            queue<T> q;
+            unordered_map<T,bool> visited;
+
+            q.push(src);
+            visited[src] = 1;
+
+                while(!q.empty()){
+                    T top = q.front();
+                    q.pop();
+                    cout << top << " ";
+
+                    // loop to check all child 
+                    for(auto child : mymap[top]){
+                        if(visited[child] == 0){
+                            visited[child] = 1;
+                            q.push(child);
+                        }
+                    }
+                }
+        }
+
+        // bfs SSSP
+        void bfs_SSSP(T src){
+            unordered_map<T,int> dist;
+            queue<T> q;
+
+            for(auto x:mymap){
+                dist[x.first] = INT_MAX;
+            }
+            dist[src] = 0;
+            q.push(src);
+            
+            // visit child, push + dist edit
+            while(!q.empty()){
+                T top = q.front();
+                q.pop();
+
+                // loop to check all child 
+                for(auto child : mymap[top]){
+                    if(dist[child] == INT_MAX){
+                        q.push(child);
+                        dist[child] = 1 + dist[top];
+                    }
+                }
+            }
+            
+            //int maxdist = 0;
+            for(auto x:dist){
+              cout << "Distance of " << x.first << " from " << src << " is " << dist[x.first] << endl;  
+            }
+           
+        }
+
+        int bfs_SSSP_SnakeLadder(T src,T dest){
+            unordered_map<T,int> dist;
+            queue<T> q;
+            unordered_map<T,bool> visited;
+            visited[src] = 1;
+
+            for(auto x:mymap){
+                dist[x.first] = INT_MAX;
+            }
+            dist[src] = 0;
+            q.push(src);
+            
+            // visit child, push + dist edit
+            while(!q.empty()){
+                T top = q.front();
+                q.pop();
+
+                // loop to check all child 
+                for(auto child : mymap[top]){
+                    if(dist[child] == INT_MAX){
+                        q.push(child);
+                        dist[child] = 1 + dist[top];
+                    }
+                }
+
+                // for(auto x : dist){
+                //     cout << x.first << " " << dist[x.first] << endl;
+                // }
+            }
+            return dist[dest];
+        }
+
+        void print(){
+            
+            for(auto x : mymap){
+                cout << x.first << "--->";
+                for(auto y : mymap[x.first]){
+                    cout << y << " ";
+                }
+                cout << endl;
+            }
+        }
+};
+
+int main(){
+   
+  graph<int> g;
+  /*g.addEdge(1,2);
+  g.addEdge(1,0);
+  g.addEdge(3,0);
+  g.addEdge(2,3);
+  g.addEdge(3,4);
+  g.addEdge(4,5);
+
+  g.bfs(3);
+  cout << endl;
+  g.bfs_SSSP(1);
+ */
+   
+   int board[37] = {0};
+   board[2] = 13;
+   board[9] = 18;
+   board[5] = 2;
+   board[18] = 11;
+   board[25] = 10;
+   board[34] = -22;
+   board[32] = -2;
+   board[24] = -8;
+   board[20] = -14;
+   board[17] = -13;
+
+        for(int i=0 ;i<36; i++){
+            for(int dice=1; dice<=6; dice++){
+                int j = i + dice;
+                j += board[j];
+
+                if(j <= 36)
+                    g.addEdge(i,j);
+            }
+        }
+        g.addEdge(36,36);
+
+        int distance = g.bfs_SSSP_SnakeLadder(0,36);
+        cout << distance << endl;
+
+    //    g.print();
+   
+   return 0; 
+}
