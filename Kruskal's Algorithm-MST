@@ -1,0 +1,97 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class DSU{
+  vector<vector<int>> adj;
+  int edges;
+  int *rank, *parent;
+
+    public :
+        DSU(int edges){
+            this -> edges = edges;
+            rank = new int[edges];
+            parent = new int[edges];
+
+            for(int i=0; i<edges; i++){
+                rank[i] = 1;
+                parent[i] = -1;
+            }
+        }
+
+        int find(int i){
+            if(parent[i] == -1)
+                return i;
+            
+            return parent[i] = find(parent[i]);
+        }
+
+        bool unite(int src,int dest){
+            int l1 = find(src);
+            int l2 = find(dest);
+
+            if(l1 != l2){
+                if(rank[l1] > rank[l2]){
+                    parent[l2] = l1;
+                    rank[l1] += rank[l2];
+                }
+                else{
+                    parent[l1] = l2;
+                    rank[l2] += rank[l1];
+                }
+              return true;
+            }
+          return false;
+        }
+
+};
+
+class Graph{
+    vector<vector<int>> adj;
+    int edges;
+    public : 
+        Graph(int edges){
+            this -> edges = edges;
+        }
+
+        void addEdge(int x,int y,int wt){
+            adj.push_back({wt,x,y});
+        }
+
+        // MAIN ALGO 
+        int kruksal(){
+            // sort
+            sort(adj.begin(),adj.end());
+            DSU d(edges);
+
+            int ans = 0;
+
+            for(int i=0; i<edges; i++){
+                int wt = adj[i][0];
+                int src = adj[i][1];
+                int dest = adj[i][2];
+
+                if(d.unite(src,dest)){
+                    ans += wt;
+                }
+            }
+            return ans;
+        }
+};
+
+
+int main(){
+
+    int edges;
+    cin >> edges;
+
+    Graph g(edges);
+    for(int i=0; i<edges; i++){
+        int src,dest,wt;
+        cin >> src >> dest >> wt;
+
+        g.addEdge(src,dest,wt);
+    }
+
+    cout << g.kruksal() << endl;
+ return 0;
+}
