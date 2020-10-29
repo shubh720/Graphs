@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+
+int find(int node,int *parent){
+    if(parent[node] == -1)
+        return node;
+    
+    int goback = find(parent[node],parent);
+    return parent[node] = goback;
+}
+
+void union_set(int src,int dest,int *parent,int *rank){
+    int l1 = find(src,parent);
+    int l2 = find(dest,parent);
+
+    if(l1 == l2){
+        return;
+    }
+    if(rank[l1] >= rank[l2]){
+        rank[l1] += rank[l2];
+        parent[l2] = l1;
+    }
+    else{
+        rank[l2] += rank[l1];
+        parent[l1] = l2;
+    }
+
+    return;
+}
+
+int main(){
+
+    // 1. union-find
+    // 2. union-find optimized
+    // 3. pairing problem
+
+    int V,edges;
+    cin >> V >> edges;
+    int parent[V],rank[V];
+    memset(parent,-1,sizeof parent);
+    for(int i=0; i<V; i++)
+        rank[i] = 1;
+
+    for(int i=0; i<edges; i++){
+        int src,dest;
+        cin >> src >> dest;
+        union_set(src,dest,parent,rank);
+    }
+
+    for(auto x : parent)
+        cout << x << " ";
+
+    cout << endl;
+    for(auto x : rank)
+        cout << x << " ";
+    
+    return 0;
+}
