@@ -1,0 +1,68 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define pii pair<int,int>
+
+class Graph{
+    int edges;
+    unordered_map<int,list<pii>> adj;
+    public :
+        Graph(int E){
+            edges = E;
+        }
+
+        void addEdge(int src,int dest,int wt){
+            adj[src].push_back({dest,wt});
+            adj[dest].push_back({src,wt});
+        }
+
+        // 0 ---> (n-1)
+        int prim_MST(){
+            // minheap
+            priority_queue<pii,vector<pii>,greater<pii>> pq;
+            pq.push({0,0});  // or make_pair(0,0) ; (wt,dest)
+            int ans = 0;
+            bool visited[edges] = {false};
+
+            while(!pq.empty()){
+                auto cap = pq.top();
+                pq.pop();
+
+                int y = cap.second;
+                int wt = cap.first;
+
+                if(visited[y] == 1){
+                    continue;
+                }
+
+                // not visited, but eligible
+                visited[y] = 1;
+                ans += wt;
+
+                for(auto x : adj[y]){
+                    if(visited[x.first] == 0){
+                        pq.push({x.second,x.first});
+                    }
+                }
+            }
+            return ans;
+        }
+
+};
+
+int main() {
+
+    int edges;
+    cin >> edges;
+
+    Graph g(edges);
+    for(int i=0; i<edges; i++){
+        int src,dest,wt;
+        cin >> src >> dest >> wt;
+
+        g.addEdge(src,dest,wt);
+    }
+
+    cout << g.prim_MST() << endl;
+
+  return 0;
+}
