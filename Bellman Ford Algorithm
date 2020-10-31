@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+void bellman_ford(int V,int src,vector<vector<int>> adj){
+    //step 1. init starting dist
+    int dist[V+1];
+    memset(dist,INT_MAX,sizeof dist);
+    dist[src] = 0;
+
+    // step 2. iteration on all edges (V-1) times 
+    for(int i=0; i<V-1; i++){
+        for(auto x : adj){
+            int u = x[0];
+            int v = x[1];
+            int wt = x[2];
+            
+            if(dist[u] != INT_MAX && dist[v] > dist[u] + wt){
+                dist[v] = dist[u] + wt;
+            }
+        }
+    }
+
+    // step 3. One more iteration to check is it still changing distances? if yes then -ve cycle for sure
+    for(auto p : adj){
+        int u = p[0];
+        int v = p[1];
+        int wt = p[2];
+        if(dist[u] != INT_MAX && dist[v] > dist[u] + wt){
+            // here means yes...changed!!
+            cout << "Negative cycle present!";
+            exit(0);
+        }
+    }
+
+    for(int i=1; i<=V; i++){
+        cout << "Node " << i << " is present at " << dist[i] << endl;
+    }
+
+  return;
+}
+
+
+int main(){
+
+    int V,E;
+    cin >> V >> E;
+
+    vector<vector<int>> adj;
+    for(int i=0; i<E; i++){
+        int s,d,wt;
+        cin >> s >> d >> wt;
+
+        adj.push_back({s,d,wt});
+    }
+
+    bellman_ford(V,1,adj);
+    return 0;
+}
